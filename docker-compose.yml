@@ -6,8 +6,8 @@ services:
     environment:
       - CHECK_FREQUENCY=240
     volumes:
-      - /path/to/config:/config
-      - /path/to/data:/assets
+      - /media/podgrab/config:/config
+      - /media/navidrome/music/podcasts:/assets
     ports:
-      - 8080:8080
+      - 56734:8080
     restart: unless-stopped

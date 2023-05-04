@@ -23,4 +23,5 @@ require (
 	golang.org/x/text v0.3.6 // indirect
 	gorm.io/driver/sqlite v1.1.3
 	gorm.io/gorm v1.20.2
+	github.com/mikkyang/id3-go 
 )

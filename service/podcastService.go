@@ -17,6 +17,7 @@ import (
 	"github.com/akhilrex/podgrab/model"
 	"github.com/antchfx/xmlquery"
 	strip "github.com/grokify/html-strip-tags-go"
+	id3 "github.com/mikkyang/id3-go"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -535,6 +536,7 @@ func DownloadMissingEpisodes() error {
 			defer wg.Done()
 			url, _ := Download(item.FileURL, item.Title, item.Podcast.Title, GetPodcastPrefix(&item, &setting))
 			SetPodcastItemAsDownloaded(item.ID, url)
+			go SetId3Tags(url, &item)
 		}(item, *setting)
 
 		if index%setting.MaxDownloadConcurrency == 0 {
@@ -611,6 +613,7 @@ func DownloadSingleEpisode(podcastItemId string) error {
 	if setting.DownloadEpisodeImages {
 		downloadImageLocally(podcastItem.ID)
 	}
+	go SetId3Tags(url, &podcastItem)
 	return err
 }
 
@@ -785,6 +788,37 @@ func UpdateSettings(downloadOnAdd bool, initialDownloadCount int, autoDownload b
 
 func UnlockMissedJobs() {
 	db.UnlockMissedJobs()
+}
+
+func SetId3Tags(path string, item *db.PodcastItem) {
+	file, err := id3.Open(path, false)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	if file.Title() == "" {
+		file.SetTitle(item.Title)
+	}
+	if file.Artist() == "" {
+		file.SetArtist(item.Podcast.Title)
+	}
+	if file.Album() == "" {
+		file.SetAlbum(item.Podcast.Title)
+	}
+	if len(file.Comments()) == 0 {
+		ft := v2.V23FrameTypeMap["COMM"]
+		utextFrame := v2.NewUnsynchTextFrame(ft, "Comment", item.Summary)
+		file.AddFrames(utextFrame)
+	}
+
+	trackFrameType := v2.V23FrameTypeMap["TRCK"]
+	tracktextFrame := v2.NewTextFrame(trackFrameType, "1")
+	file.AddFrames(tracktextFrame)
+
+	file.SetGenre("Podcast")
+	file.SetYear(strconv.Itoa(item.PubDate.Year()))
+	file.SetDate(item.PubDate.String())
+	defer file.Close()
 }
 
 func AddTag(label, description string) (db.Tag, error) {
