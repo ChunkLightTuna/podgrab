@@ -12,12 +12,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ChunkLightTuna/podgrab/db"
+	"github.com/ChunkLightTuna/podgrab/model"
 	"github.com/TheHippo/podcastindex"
-	"github.com/akhilrex/podgrab/db"
-	"github.com/akhilrex/podgrab/model"
 	"github.com/antchfx/xmlquery"
 	strip "github.com/grokify/html-strip-tags-go"
 	id3 "github.com/mikkyang/id3-go"
+	v2 "github.com/mikkyang/id3-go/v2"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -36,7 +37,7 @@ func ParseOpml(content string) (model.OpmlModel, error) {
 	return response, err
 }
 
-//FetchURL is
+// FetchURL is
 func FetchURL(url string) (model.PodcastData, []byte, error) {
 	body, err := makeQuery(url)
 	if err != nil {
@@ -820,7 +821,7 @@ func UnlockMissedJobs() {
 }
 
 func SetId3Tags(path string, item *db.PodcastItem) {
-	file, err := id3.Open(path, false)
+	file, err := id3.Open(path)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

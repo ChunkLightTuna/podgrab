@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/akhilrex/podgrab/controllers"
-	"github.com/akhilrex/podgrab/db"
-	"github.com/akhilrex/podgrab/service"
+	"github.com/ChunkLightTuna/podgrab/controllers"
+	"github.com/ChunkLightTuna/podgrab/db"
+	"github.com/ChunkLightTuna/podgrab/service"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/jasonlvhit/gocron"

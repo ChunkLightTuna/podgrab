@@ -8,11 +8,11 @@ import (
 	"path"
 	"strings"
 
-	"github.com/akhilrex/podgrab/model"
-	"github.com/akhilrex/podgrab/service"
+	"github.com/ChunkLightTuna/podgrab/model"
+	"github.com/ChunkLightTuna/podgrab/service"
 	"github.com/gin-contrib/location"
 
-	"github.com/akhilrex/podgrab/db"
+	"github.com/ChunkLightTuna/podgrab/db"
 	"github.com/gin-gonic/gin"
 )
 

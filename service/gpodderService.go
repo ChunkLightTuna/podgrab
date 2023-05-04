@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/akhilrex/podgrab/model"
+	"github.com/ChunkLightTuna/podgrab/model"
 )
 
 // type GoodReadsService struct {
