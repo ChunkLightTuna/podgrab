@@ -1,4 +1,4 @@
-module github.com/akhilrex/podgrab
+module github.com/ChunkLightTuna/podgrab
 
 go 1.15
 
