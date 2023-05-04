@@ -513,6 +513,20 @@ func GetPodcastPrefix(item *db.PodcastItem, setting *db.Setting) string {
 	}
 	return prefix
 }
+
+func WritePlaylist(dir string) error {
+	entries, _ := os.ReadDir(dir)
+	mp3s := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		fileName := entry.Name()
+		if strings.HasSuffix(fileName, ".mp3") {
+			mp3s = append(mp3s, fileName)
+		}
+	}
+
+	return os.WriteFile(dir+"/playlist.m3u", []byte(strings.Join(mp3s, "\n")), 0644)
+}
+
 func DownloadMissingEpisodes() error {
 	const JOB_NAME = "DownloadMissingEpisodes"
 	lock := db.GetLock(JOB_NAME)
@@ -543,6 +557,21 @@ func DownloadMissingEpisodes() error {
 			wg.Wait()
 		}
 	}
+
+	podcastDirs, err := ioutil.ReadDir(os.Getenv("DATA"))
+	if err != nil {
+		return err
+	}
+
+	for _, podcastDir := range podcastDirs {
+		if podcastDir.IsDir() {
+			err = WritePlaylist(podcastDir.Name())
+			if err != nil {
+				return err
+			}
+		}
+	}
+
 	wg.Wait()
 	db.Unlock(JOB_NAME)
 	return nil
